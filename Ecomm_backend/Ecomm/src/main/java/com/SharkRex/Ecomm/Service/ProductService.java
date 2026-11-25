@@ -20,4 +20,13 @@ public class ProductService {
         productRepo.saveAll(product);
         return "Product added successfully";
     }
+
+    public String updateProduct(int id, Products product) {
+       if (!productRepo.existsById(id)) {
+        return "Product not found";
+    }
+    product.setProductId(id);
+    productRepo.save(product);
+    return "Product updated successfully";
+    }
 }

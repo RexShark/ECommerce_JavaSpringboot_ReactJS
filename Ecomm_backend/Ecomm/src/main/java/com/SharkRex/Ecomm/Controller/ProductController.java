@@ -11,8 +11,10 @@ import com.SharkRex.Ecomm.Models.Products;
 
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 
@@ -32,6 +34,11 @@ public class ProductController {
     @PostMapping("/products/bulk")
     public String addProductDetails(@RequestBody List<Products> prod) {
         return productService.addProduct(prod);
+    }
+
+    @PutMapping("/products/{id}")
+    public String updateProductDetails(@PathVariable int id, @RequestBody Products prod) {
+        return productService.updateProduct(id, prod);
     }
     
 }
