@@ -108,3 +108,21 @@ body {
   .form-grid { grid-template-columns: 1fr; }
   .navbar { padding: 14px 16px; }
 }
+.detail {
+  display: grid; grid-template-columns: 1fr 1.2fr; gap: 32px;
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 20px; padding: 28px; margin-top: 20px;
+}
+.detail-img {
+  display: flex; align-items: center; justify-content: center;
+  font-size: 8rem; min-height: 320px; border-radius: 16px;
+  background: linear-gradient(135deg, #e0e7ff, #f3e8ff);
+}
+.detail-info { display: flex; flex-direction: column; gap: 12px; align-items: flex-start; }
+.detail-info h1 { font-size: 2rem; }
+.detail-price { font-size: 2rem; font-weight: 800; }
+.detail-desc { color: var(--muted); line-height: 1.6; }
+
+@media (max-width: 720px) {
+  .detail { grid-template-columns: 1fr; }
+}

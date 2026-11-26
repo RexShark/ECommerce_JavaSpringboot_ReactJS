@@ -29,4 +29,8 @@ public class ProductService {
     productRepo.save(product);
     return "Product updated successfully";
     }
+
+    public Products getProduct(int id) {
+        return productRepo.findById(id).orElse(null);
+    }
 }

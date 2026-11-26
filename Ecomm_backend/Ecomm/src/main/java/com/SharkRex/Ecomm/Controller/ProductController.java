@@ -3,6 +3,8 @@ package com.SharkRex.Ecomm.Controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,14 +29,20 @@ public class ProductController {
     ProductService productService;
 
     @GetMapping("/products")
-    public List<Products> getProductDetails() {
-        return productService.getProductDetails();
+    public ResponseEntity<List<Products>> getProductDetails() {
+        return new ResponseEntity<>(productService.getProductDetails(), HttpStatus.OK);
     }
     
     @PostMapping("/products/bulk")
     public String addProductDetails(@RequestBody List<Products> prod) {
         return productService.addProduct(prod);
     }
+
+    @GetMapping("/products/{id}")
+    public ResponseEntity<Products> getProduct(@PathVariable int id) {
+        return new ResponseEntity<>(productService.getProduct(id),HttpStatus.OK);
+    }
+    
 
     @PutMapping("/products/{id}")
     public String updateProductDetails(@PathVariable int id, @RequestBody Products prod) {

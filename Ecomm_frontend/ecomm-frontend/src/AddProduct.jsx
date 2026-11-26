@@ -83,4 +83,4 @@ export default function AddProduct({ nextId, onClose, onAdded }) {
       </form>
     </div>
   );
-}s
+}

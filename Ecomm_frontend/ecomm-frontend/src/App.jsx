@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import ProductList from "./ProductList";
+import ProductDetail from "./ProductDetail";
 import AddProduct from "./AddProduct";
 
 const API = "http://localhost:8080";
@@ -11,6 +12,7 @@ export default function App() {
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("All");
   const [showForm, setShowForm] = useState(false);
+  const [selected, setSelected] = useState(null);
 
   const loadProducts = () => {
     setLoading(true);
@@ -44,25 +46,39 @@ export default function App() {
   return (
     <>
       <nav className="navbar">
-        <span className="logo">🛍️ Ecomm</span>
+        <span
+          className="logo"
+          style={{ cursor: "pointer" }}
+          onClick={() => setSelected(null)}
+        >
+          🛍️ Ecomm
+        </span>
         <button className="btn" onClick={() => setShowForm(true)}>+ Add Product</button>
       </nav>
 
-      <main className="container">
-        <div className="toolbar">
-          <input
-            placeholder="Search by name or brand..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-          <select value={category} onChange={(e) => setCategory(e.target.value)}>
-            {categories.map((c) => <option key={c}>{c}</option>)}
-          </select>
-        </div>
+      {selected ? (
+        <ProductDetail id={selected} onBack={() => setSelected(null)} />
+      ) : (
+        <main className="container">
+          <div className="toolbar">
+            <input
+              placeholder="Search by name or brand..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+            <select value={category} onChange={(e) => setCategory(e.target.value)}>
+              {categories.map((c) => <option key={c}>{c}</option>)}
+            </select>
+          </div>
 
-        {error && <div className="error">{error}. Is the backend running?</div>}
-        {loading ? <p className="state">Loading products...</p> : <ProductList products={filtered} />}
-      </main>
+          {error && <div className="error">{error}. Is the backend running?</div>}
+          {loading ? (
+            <p className="state">Loading products...</p>
+          ) : (
+            <ProductList products={filtered} onSelect={setSelected} />
+          )}
+        </main>
+      )}
 
       {showForm && (
         <AddProduct

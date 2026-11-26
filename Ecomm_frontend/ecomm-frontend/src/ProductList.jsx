@@ -7,7 +7,7 @@ const money = new Intl.NumberFormat("en-IN", {
   style: "currency", currency: "INR", maximumFractionDigits: 0,
 });
 
-export default function ProductList({ products }) {
+export default function ProductList({ products, onSelect }) {
   if (products.length === 0) return <p className="empty">No products found.</p>;
 
   return (
@@ -15,7 +15,12 @@ export default function ProductList({ products }) {
       {products.map((p) => {
         const inStock = p.productAvailability && p.productStock > 0;
         return (
-          <div className="card" key={p.productId}>
+          <div
+            className="card"
+            key={p.productId}
+            onClick={() => onSelect(p.productId)}
+            style={{ cursor: "pointer" }}
+          >
             <div className="card-img">
               {icons[p.productCategory?.toLowerCase()] || "📦"}
             </div>
