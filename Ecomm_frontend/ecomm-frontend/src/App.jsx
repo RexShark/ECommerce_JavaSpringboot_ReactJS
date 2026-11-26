@@ -12,6 +12,7 @@ export default function App() {
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("All");
   const [showForm, setShowForm] = useState(false);
+  const [editingProduct, setEditingProduct] = useState(null);
   const [selected, setSelected] = useState(null);
 
   const loadProducts = () => {
@@ -41,7 +42,28 @@ export default function App() {
     );
   });
 
-  const nextId = products.reduce((max, p) => Math.max(max, p.productId), 0) + 1;
+  const openEdit = (product) => {
+    setEditingProduct(product);
+    setShowForm(true);
+  };
+
+  const closeForm = () => {
+    setShowForm(false);
+    setEditingProduct(null);
+  };
+
+  const deleteProduct = async (product) => {
+    if (!window.confirm(`Delete ${product.productName}?`)) return;
+    try {
+      const res = await fetch(`${API}/products/${product.productId}`, {
+        method: "DELETE",
+      });
+      if (!res.ok) throw new Error("Failed to delete product");
+      loadProducts();
+    } catch (err) {
+      alert(err.message);
+    }
+  };
 
   return (
     <>
@@ -75,16 +97,21 @@ export default function App() {
           {loading ? (
             <p className="state">Loading products...</p>
           ) : (
-            <ProductList products={filtered} onSelect={setSelected} />
+            <ProductList
+              products={filtered}
+              onSelect={setSelected}
+              onEdit={openEdit}
+              onDelete={deleteProduct}
+            />
           )}
         </main>
       )}
 
       {showForm && (
         <AddProduct
-          nextId={nextId}
-          onClose={() => setShowForm(false)}
-          onAdded={() => { setShowForm(false); loadProducts(); }}
+          product={editingProduct}
+          onClose={closeForm}
+          onSaved={() => { closeForm(); loadProducts(); }}
         />
       )}
     </>

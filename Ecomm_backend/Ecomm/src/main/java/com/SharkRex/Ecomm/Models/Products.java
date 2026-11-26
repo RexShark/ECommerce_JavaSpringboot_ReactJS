@@ -21,7 +21,7 @@ public class Products {
 
     @Id 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public int productId;
+    public Integer productId;
     public String productName;
     public String productDesc;
     public BigDecimal productPrice;

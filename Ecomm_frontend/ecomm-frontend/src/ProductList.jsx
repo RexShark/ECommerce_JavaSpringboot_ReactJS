@@ -7,7 +7,7 @@ const money = new Intl.NumberFormat("en-IN", {
   style: "currency", currency: "INR", maximumFractionDigits: 0,
 });
 
-export default function ProductList({ products, onSelect }) {
+export default function ProductList({ products, onSelect, onEdit, onDelete }) {
   if (products.length === 0) return <p className="empty">No products found.</p>;
 
   return (
@@ -36,6 +36,22 @@ export default function ProductList({ products, onSelect }) {
                 <span className={`badge ${inStock ? "in" : "out"}`}>
                   {inStock ? `${p.productStock} in stock` : "Out of stock"}
                 </span>
+              </div>
+              <div className="card-actions" onClick={(e) => e.stopPropagation()}>
+                <button
+                  type="button"
+                  className="btn secondary"
+                  onClick={() => onEdit(p)}
+                >
+                  Update
+                </button>
+                <button
+                  type="button"
+                  className="btn danger"
+                  onClick={() => onDelete(p)}
+                >
+                  Delete
+                </button>
               </div>
             </div>
           </div>

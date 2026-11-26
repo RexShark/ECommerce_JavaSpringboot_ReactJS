@@ -10,3 +10,10 @@ INSERT INTO products (product_id, product_name, product_desc, product_price, pro
 (9, 'iPad Air 5', '10.9-inch, 64GB, M1 chip, Wi-Fi', 59900.00, 'Apple', 'Tablets', '2022-03-18', true, 18),
 (10, 'JBL Flip 6', 'Portable Bluetooth speaker, IP67 waterproof', 9999.00, 'JBL', 'Speakers', '2021-08-01', true, 100)
 ON CONFLICT (product_id) DO NOTHING;
+
+SELECT setval(
+    pg_get_serial_sequence('products', 'product_id'),
+    COALESCE(MAX(product_id), 1),
+    MAX(product_id) IS NOT NULL
+)
+FROM products;
