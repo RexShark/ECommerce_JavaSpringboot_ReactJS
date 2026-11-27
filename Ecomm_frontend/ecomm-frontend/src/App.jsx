@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import ProductList from "./ProductList";
 import ProductDetail from "./ProductDetail";
 import AddProduct from "./AddProduct";
@@ -10,37 +10,50 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [search, setSearch] = useState("");
+  const [categories, setCategories] = useState(["All"]);
   const [category, setCategory] = useState("All");
+  const [refreshKey, setRefreshKey] = useState(0);
   const [showForm, setShowForm] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
   const [selected, setSelected] = useState(null);
 
-  const loadProducts = () => {
+  const loadProducts = () => setRefreshKey((key) => key + 1);
+
+  useEffect(() => {
+    const controller = new AbortController();
     setLoading(true);
-    fetch(`${API}/products`)
-      .then((res) => {
-        if (!res.ok) throw new Error("Failed to fetch products");
-        return res.json();
-      })
-      .then((data) => { setProducts(data); setError(""); })
-      .catch((err) => setError(err.message))
-      .finally(() => setLoading(false));
-  };
+    setError("");
 
-  useEffect(loadProducts, []);
+    const timeoutId = setTimeout(() => {
+      const params = new URLSearchParams({ keyword: search });
+      fetch(`${API}/products/search?${params}`, { signal: controller.signal })
+        .then((res) => {
+          if (!res.ok) throw new Error("Failed to search products");
+          return res.json();
+        })
+        .then((data) => {
+          setProducts(data);
+          if (search === "") {
+            setCategories(["All", ...new Set(data.map((p) => p.productCategory).filter(Boolean))]);
+          }
+        })
+        .catch((err) => {
+          if (err.name !== "AbortError") setError(err.message);
+        })
+        .finally(() => {
+          if (!controller.signal.aborted) setLoading(false);
+        });
+    }, 300);
 
-  const categories = useMemo(
-    () => ["All", ...new Set(products.map((p) => p.productCategory).filter(Boolean))],
-    [products]
+    return () => {
+      clearTimeout(timeoutId);
+      controller.abort();
+    };
+  }, [search, refreshKey]);
+
+  const filtered = products.filter(
+    (product) => category === "All" || product.productCategory === category
   );
-
-  const filtered = products.filter((p) => {
-    const text = `${p.productName} ${p.productBrand}`.toLowerCase();
-    return (
-      text.includes(search.toLowerCase()) &&
-      (category === "All" || p.productCategory === category)
-    );
-  });
 
   const openEdit = (product) => {
     setEditingProduct(product);
@@ -84,7 +97,7 @@ export default function App() {
         <main className="container">
           <div className="toolbar">
             <input
-              placeholder="Search by name or brand..."
+              placeholder="Search by name, brand, description, or category..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />

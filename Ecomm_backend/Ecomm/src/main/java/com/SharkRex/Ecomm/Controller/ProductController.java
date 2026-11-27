@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 
 
@@ -56,6 +57,12 @@ public class ProductController {
         boolean deleted = productService.deleteProduct(id);
         if (!deleted) return new ResponseEntity<>("Product not found", HttpStatus.NOT_FOUND);
         return new ResponseEntity<>("Product deleted successfully", HttpStatus.OK);
+    }
+
+    @GetMapping("/products/search")
+    public ResponseEntity<List<Products>> searchProduct(@RequestParam String keyword) {
+        List<Products> products = productService.searchProducts(keyword);
+        return new ResponseEntity<>(products, HttpStatus.OK);
     }
     
 }

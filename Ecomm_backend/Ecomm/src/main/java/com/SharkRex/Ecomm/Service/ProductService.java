@@ -41,4 +41,8 @@ public class ProductService {
         productRepo.deleteById(id);
         return true;
     }
+
+    public List<Products> searchProducts(String keyword) {
+        return productRepo.findByProductNameContainingIgnoreCase(keyword);
+    }
 }
